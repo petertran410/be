@@ -63,9 +63,13 @@ const connect = mysql.createConnection({
 
 // endpoint viết chữ thường và cách nhau bởi dấu gạch ngang
 app.get("/get-video", (req, res) => {
-  // Phải đồng bộ hệ thộng => then catch, async await
-  // err trước rồi tới result
-  connect.query("SELECT * FROM video", (err, result) => {
-    res.send(result);
-  });
+  try {
+    // Phải đồng bộ hệ thộng => then catch, async await
+    // err trước rồi tới result
+    connect.query("SELECT * FROM video", (err, result) => {
+      res.status(200).send(result);
+    });
+  } catch (exception) {
+    res.status(500).send("Lỗi ....");
+  }
 });
