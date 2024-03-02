@@ -8,6 +8,14 @@ app.use(express.json());
 // Khởi tạo server BE chạy port 8080
 app.listen(8080);
 
+// yarn add cors
+import cors from "cors";
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+  })
+);
+
 // Khởi động server BE bằng lệnh node server.js
 
 // GET url: localhost:8080/demo
