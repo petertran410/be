@@ -1,6 +1,10 @@
 import express from "express";
 const app = express();
 
+// Chèn middleware, custom dữ liệu thành object
+// Định dạng lại dữ liệu từ text => json
+app.use(express.json());
+
 // Khởi tạo server BE chạy port 8080
 app.listen(8080);
 
@@ -37,3 +41,20 @@ app.get("/demo", (req, res) => {
 // app.post();
 // app.put();
 // app.delete();
+
+// yarn add mysql2
+import mysql from "mysql2";
+
+const connect = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "1234",
+  port: "3306",
+  database: "tranngocnhan",
+});
+
+// endpoint viết chữ thường và cách nhau bởi dấu gạch ngang
+app.get("/get-video", (req, res) => {
+  let data = connect.query("SELECT * FROM video");
+  res.send(data);
+});
