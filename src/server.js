@@ -52,6 +52,7 @@ app.get("/demo", (req, res) => {
 
 // yarn add mysql2
 import mysql from "mysql2";
+import { createVideo, getVideo } from "./controllers/videoController.js";
 
 const connect = mysql.createConnection({
   host: "localhost",
@@ -62,14 +63,7 @@ const connect = mysql.createConnection({
 });
 
 // endpoint viết chữ thường và cách nhau bởi dấu gạch ngang
-app.get("/get-video", (req, res) => {
-  try {
-    // Phải đồng bộ hệ thộng => then catch, async await
-    // err trước rồi tới result
-    connect.query("SELECT * FROM video", (err, result) => {
-      res.status(200).send(result);
-    });
-  } catch (exception) {
-    res.status(500).send("Lỗi ....");
-  }
-});
+// localhost:8080/video/get-video
+// user => get-user, create-user
+app.get("/video/get-video", getVideo);
+app.post("/video/create-video", createVideo);
