@@ -1,9 +1,8 @@
-import { createVideo, getVideo } from "../controllers/videoController";
-
 import express from "express";
+import { createVideo, getVideo } from "../controllers/videoController.js";
 
-const userRoute = express.Router();
+export const videoRoute = express.Router();
 
 // Nơi quản lý API của đối tượng
-userRoute.get("/video/get-video", getVideo);
-userRoute.post("/video/create-video", createVideo);
+videoRoute.get("/get-video", getVideo);
+videoRoute.post("/create-video", createVideo);

@@ -10,11 +10,7 @@ app.listen(8080);
 
 // yarn add cors
 import cors from "cors";
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-  })
-);
+app.use(cors());
 
 // Khởi động server BE bằng lệnh node server.js
 
@@ -63,7 +59,10 @@ const connect = mysql.createConnection({
 });
 
 // endpoint viết chữ thường và cách nhau bởi dấu gạch ngang
-// localhost:8080/video/get-video
 // user => get-user, create-user
-app.get("/video/get-video", getVideo);
-app.post("/video/create-video", createVideo);
+// app.get("/video/get-video", getVideo);
+// app.post("/video/create-video", createVideo);
+
+import { rootRoute } from "./routes/rootRoutes.js";
+// localhost:8080/video/get-video
+app.use(rootRoute);
