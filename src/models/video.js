@@ -6,7 +6,7 @@ class Video extends Model {}
 // tham số 2: kết nối class với table
 Video.init(
   {
-    video_id: { type: DataTypes.INTEGER, primaryKey: true },
+    video_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     video_name: { type: DataTypes.STRING },
     thumbnail: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
@@ -18,4 +18,4 @@ Video.init(
   {}
 );
 
-// 1:38:32
+// 1:44:04
