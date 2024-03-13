@@ -1,7 +1,16 @@
+import Video from "../models/video.js";
+
 // Quản lí, thực hiện chức năng
-export const getVideo = (req, res) => {
+export const getVideo = async (req, res) => {
   try {
-    res.status(200).send("get-video");
+    // bất đồng bộ
+
+    // SELECT * FROM video
+    // let data = await Video.findAll();
+
+    // SELECT * FROM video WHERE
+    let data = await Video.findAll();
+    res.status(200).send(data);
   } catch (error) {
     res.status(500).send("Lỗi ...");
   }

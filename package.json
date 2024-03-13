@@ -4,7 +4,7 @@
   "main": "index.js",
   "author": "Ngoc Nhan <60886911+petertran410@users.noreply.github.com>",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon src/server.js"
   },
@@ -13,7 +13,8 @@
     "express": "^4.18.2",
     "mysql2": "^3.9.2",
     "nodemon": "^3.1.0",
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
