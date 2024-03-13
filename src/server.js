@@ -50,14 +50,6 @@ app.get("/demo", (req, res) => {
 import mysql from "mysql2";
 import { createVideo, getVideo } from "./controllers/videoController.js";
 
-const connect = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "1234",
-  port: "3306",
-  database: "tranngocnhan",
-});
-
 // endpoint viết chữ thường và cách nhau bởi dấu gạch ngang
 // user => get-user, create-user
 // app.get("/video/get-video", getVideo);

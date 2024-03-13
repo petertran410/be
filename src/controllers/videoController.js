@@ -1,4 +1,3 @@
-
 // Quản lí, thực hiện chức năng
 export const getVideo = (req, res) => {
   try {
@@ -10,4 +9,8 @@ export const getVideo = (req, res) => {
 
 export const createVideo = (req, res) => {
   res.send("create video");
+};
+
+export const getVideoId = (req, res) => {
+  res.send("get video id");
 };
