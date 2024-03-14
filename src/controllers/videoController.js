@@ -1,4 +1,5 @@
 // import Video from "../models/video.js";
+import { responseData } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
 import { Sequelize } from "sequelize";
@@ -41,9 +42,9 @@ export const getVideo = async (req, res) => {
     //   attributes: ["video_id", "video_name"],
     // });
 
-    res.status(200).send(data);
+    responseData(res, "Thành công", data, 200);
   } catch (error) {
-    res.status(500).send("Lỗi ...");
+    responseData(res, "Lỗi ...", error, 500);
   }
 };
 
@@ -59,8 +60,9 @@ export const getVideoType = async (req, res) => {
   try {
     let dataVideoType = await model.video_type.findAll();
 
-    res.status(200).send(dataVideoType);
+    // res.status(200).send(dataVideoType);
+    responseData(res, "Thành công", dataVideoType, 200);
   } catch (error) {
-    res.status(500).send(error);
+    responseData(res, "Lỗi ...", error, 500);
   }
 };
