@@ -66,3 +66,18 @@ export const getVideoType = async (req, res) => {
     responseData(res, "Lỗi ...", error, 500);
   }
 };
+
+export const getVideoByType = async (req, res) => {
+  try {
+    let { typeId } = req.params;
+
+    let data = await model.video.findAll({
+      where: {
+        type_id: typeId,
+      },
+    });
+    responseData(res, "Thành công", data, 200);
+  } catch (error) {
+    response(res, "Lỗi ...", error, 500);
+  }
+};
