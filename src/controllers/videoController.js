@@ -52,10 +52,6 @@ export const createVideo = (req, res) => {
   res.send("create video");
 };
 
-export const getVideoId = (req, res) => {
-  res.send("get video id");
-};
-
 export const getVideoType = async (req, res) => {
   try {
     let dataVideoType = await model.video_type.findAll();
@@ -90,7 +86,7 @@ export const getVideoPage = async (req, res) => {
 
     // trả về data, totalPage
     let dataCount = await model.video.count();
-    let totalPage = Math.ceil(dataCount/pageSize);
+    let totalPage = Math.ceil(dataCount / pageSize);
 
     // SELECT * FROM video LIMIT index, pageSize
     let data = await model.video.findAll({
@@ -98,7 +94,28 @@ export const getVideoPage = async (req, res) => {
       limit: pageSize,
     });
 
-    responseData(res, "Thành công", {data, totalPage}, 200);
+    responseData(res, "Thành công", { data, totalPage }, 200);
+  } catch (err) {
+    responseData(res, "Lỗi ...", err, 500);
+  }
+};
+
+export const getVideoId = async (req, res) => {
+  try {
+    let { videoId } = req.params;
+
+    // Tìm khóa chính
+    let dataPk = await model.video.findByPk(videoId);
+
+    // object {}
+    let data = await model.video.findOne({
+      where: {
+        video_id: videoId,
+      },
+      include: ["user", "type"],
+    });
+
+    responseData(res, "Thành công", data, 200);
   } catch (err) {
     responseData(res, "Lỗi ...", err, 500);
   }
