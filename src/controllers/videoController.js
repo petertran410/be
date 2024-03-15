@@ -88,13 +88,17 @@ export const getVideoPage = async (req, res) => {
     let pageSize = 3;
     let index = (page - 1) * pageSize;
 
+    // trả về data, totalPage
+    let dataCount = await model.video.count();
+    let totalPage = Math.ceil(dataCount/pageSize);
+
     // SELECT * FROM video LIMIT index, pageSize
     let data = await model.video.findAll({
       offset: index,
       limit: pageSize,
     });
 
-    responseData(res, "Thành công", data, 200);
+    responseData(res, "Thành công", {data, totalPage}, 200);
   } catch (err) {
     responseData(res, "Lỗi ...", err, 500);
   }
