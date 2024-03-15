@@ -65,7 +65,7 @@ export const getVideoType = async (req, res) => {
   } catch (error) {
     responseData(res, "Lỗi ...", error, 500);
   }
-};
+}; 
 
 export const getVideoByType = async (req, res) => {
   try {

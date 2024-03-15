@@ -9,11 +9,12 @@
 // });
 
 import { Sequelize } from "sequelize";
+import config from "../config/config.js";
 
-const sequelize = new Sequelize("tranngocnhan", "root", "1234", {
-  host: "localhost",
-  port: "3306",
-  dialect: "mysql", // CSDL đang sử dụng
+const sequelize = new Sequelize(config.database, config.user, config.pass, {
+  host: config.host,
+  port: config.port,
+  dialect: config.dialect, // CSDL đang sử dụng
 });
 
 // Test kết nối => node src/models/connect.js
