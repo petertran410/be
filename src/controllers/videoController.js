@@ -65,7 +65,7 @@ export const getVideoType = async (req, res) => {
   } catch (error) {
     responseData(res, "Lỗi ...", error, 500);
   }
-}; 
+};
 
 export const getVideoByType = async (req, res) => {
   try {
@@ -79,5 +79,23 @@ export const getVideoByType = async (req, res) => {
     responseData(res, "Thành công", data, 200);
   } catch (error) {
     response(res, "Lỗi ...", error, 500);
+  }
+};
+
+export const getVideoPage = async (req, res) => {
+  try {
+    let { page } = req.params;
+    let pageSize = 3;
+    let index = (page - 1) * pageSize;
+
+    // SELECT * FROM video LIMIT index, pageSize
+    let data = await model.video.findAll({
+      offset: index,
+      limit: pageSize,
+    });
+
+    responseData(res, "Thành công", data, 200);
+  } catch (err) {
+    responseData(res, "Lỗi ...", err, 500);
   }
 };

@@ -4,6 +4,7 @@ import {
   getVideo,
   getVideoByType,
   getVideoId,
+  getVideoPage,
   getVideoType,
 } from "../controllers/videoController.js";
 
@@ -19,3 +20,6 @@ videoRoute.get("/get-video-type", getVideoType);
 
 // API lấy tất cả video theo type id
 videoRoute.get("/get-video-by-type/:typeId", getVideoByType);
+
+// API get video pagination
+videoRoute.get("/get-video-page/:page", getVideoPage);
