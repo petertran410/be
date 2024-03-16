@@ -105,7 +105,7 @@ export const getVideoId = async (req, res) => {
     let { videoId } = req.params;
 
     // Tìm khóa chính
-    let dataPk = await model.video.findByPk(videoId);
+    // let dataPk = await model.video.findByPk(videoId);
 
     // object {}
     let data = await model.video.findOne({
