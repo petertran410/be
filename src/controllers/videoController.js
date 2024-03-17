@@ -120,3 +120,17 @@ export const getVideoId = async (req, res) => {
     responseData(res, "Lỗi ...", err, 500);
   }
 };
+
+export const getCommentVideo = async (req, res) => {
+  try {
+    let { videoId } = req.params;
+    let data = await model.video_comment.findAll({
+      where: {
+        video_id: videoId,
+      },
+      include: ["user"],
+    });
+
+    responseData(res, "Thành công", data, 200);
+  } catch (error) {}
+};
