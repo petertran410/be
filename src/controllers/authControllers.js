@@ -7,23 +7,35 @@ let model = initModels(sequelize);
 let Op = Sequelize.Op;
 
 export const login = async (req, res) => {
-  // try {
-  // } catch (error) {
-  // }
+  try {
+    let { email, pass_word } = req.body;
+    let checkEmailPass = await model.users.findOne({
+      where: {
+        email,
+        pass_word,
+      },
+    });
+
+    if (checkEmailPass) {
+      responseData(res, "Login thành công", "token", 200);
+    }
+  } catch (error) {
+    responseData(res, "Email hoặc password không đúng", error, 400);
+  }
 };
 
 export const signUp = async (req, res) => {
   try {
     let { full_name, email, pass_word } = req.body;
 
-    let checkEmail = await model.users.findOne({
+    let checkUser = await model.users.findOne({
       where: {
         email,
       },
     });
 
     // check trùng email
-    if (checkEmail) {
+    if (checkUser) {
       // res.status(400).send("Email đã tồn tại");
       responseData(res, "Email đã tồn tại", "", 400);
       return;
