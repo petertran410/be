@@ -12,7 +12,7 @@ export const getVideo = async (req, res) => {
   try {
     // bất đồng bộ
 
-    // SELECT * FROM video
+    // SELECT * FROM video  
     // let data = await Video.findAll();
     let data = await model.video.findAll();
 
