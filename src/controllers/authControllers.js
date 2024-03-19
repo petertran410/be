@@ -12,15 +12,20 @@ export const login = async (req, res) => {
     let checkEmailPass = await model.users.findOne({
       where: {
         email,
-        pass_word,
       },
     });
 
     if (checkEmailPass) {
-      responseData(res, "Login thành công", "token", 200);
+      if (checkEmailPass.pass_word === pass_word) {
+        responseData(res, "Login thành công", "token", 200);
+      } else {
+        responseData(res, "Mật khẩu không chính xác", "", 400);
+      }
+    } else {
+      responseData(res, "Email không chính xác", "", 400);
     }
   } catch (error) {
-    responseData(res, "Email hoặc password không đúng", error, 400);
+    responseData(res, "Lỗi ...", error, 500);
   }
 };
 
