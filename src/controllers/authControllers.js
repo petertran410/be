@@ -63,3 +63,11 @@ export const signUp = async (req, res) => {
     responseData(res, "Lỗi ...", error, 500);
   }
 };
+
+export const loginFacebook = (req, res) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}

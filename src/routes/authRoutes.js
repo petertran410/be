@@ -7,3 +7,5 @@ export const authRoute = express.Router();
 authRoute.post("/login", login);
 // signup
 authRoute.post("/signup", signUp);
+// loginFacebook
+authRoute.post("/login-facebook", loginFacebook);
