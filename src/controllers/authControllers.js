@@ -64,10 +64,34 @@ export const signUp = async (req, res) => {
   }
 };
 
-export const loginFacebook = (req, res) => {
+export const loginFacebook = async (req, res) => {
   try {
-    
+    let { faceAppId, full_name } = req.body;
+
+    // Kiểm tra facebook app id
+    let checkUser = await model.users.findOne({
+      where: {
+        face_app_id: faceAppId,
+      },
+    });
+
+    // Nếu đã tồn tại => login
+    if (!checkUser) {
+      // Nếu chưa tồn tại => signup
+      let newData = {
+        full_name,
+        email: "",
+        pass_word: "",
+        avatar: "",
+        face_app_id: faceAppId,
+        role: "user",
+      };
+      // Create => thêm mới users
+      // INSERT INTO VALUES
+      await model.users.create(newData);
+    }
+    responseData(res, "Đăng kí thành công", "token", 200);
   } catch (error) {
-    
+    responseData(res, "Lỗi ...", error, 500);
   }
-}
+};
