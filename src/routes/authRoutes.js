@@ -9,3 +9,7 @@ authRoute.post("/login", login);
 authRoute.post("/signup", signUp);
 // loginFacebook
 authRoute.post("/login-facebook", loginFacebook);
+
+// yarn add bcrypt
+// mã hoá pass_word
+// so sánh dữ liệu thô và mã hoá

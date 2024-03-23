@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize";
 import { responseData } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
+import bcrypt from "bcrypt";
+import { createToken } from "../config/jwt.js";
 
 let model = initModels(sequelize);
 let Op = Sequelize.Op;
@@ -16,8 +18,10 @@ export const login = async (req, res) => {
     });
 
     if (checkEmailPass) {
-      if (checkEmailPass.pass_word === pass_word) {
-        responseData(res, "Login thành công", "token", 200);
+      if (bcrypt.compareSync(pass_word, checkEmailPass.pass_word)) {
+        let token = createToken({ user_id: checkEmailPass.user_id });
+        console.log(token);
+        responseData(res, "Login thành công", token, 200);
       } else {
         responseData(res, "Mật khẩu không chính xác", "", 400);
       }
@@ -49,7 +53,7 @@ export const signUp = async (req, res) => {
     let newData = {
       full_name,
       email,
-      pass_word,
+      pass_word: bcrypt.hashSync(pass_word, 10),
       avatar: "",
       face_app_id: "",
       role: "user",
