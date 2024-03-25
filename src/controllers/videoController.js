@@ -145,5 +145,20 @@ export const commentVideo = async (req, res) => {
 
     let { user_id } = dToken.data;
     let { video_id, content } = req.body;
-  } catch (error) {}
+
+    let newData = {
+      user_id,
+      video_id,
+      content,
+      date_create: new Date(),
+      reply_list: "",
+      timestamp: new Date(),
+    };
+
+    await model.video_comment.create(newData);
+
+    responseData(res, "Thành công", "", 200);
+  } catch (error) {
+    responseData(res, "Lỗi ...", error, 500);
+  }
 };
