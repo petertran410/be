@@ -1,4 +1,5 @@
 // import Video from "../models/video.js";
+import { decodeToken } from "../config/jwt.js";
 import { responseData } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
@@ -12,7 +13,7 @@ export const getVideo = async (req, res) => {
   try {
     // bất đồng bộ
 
-    // SELECT * FROM video  
+    // SELECT * FROM video
     // let data = await Video.findAll();
     let data = await model.video.findAll();
 
@@ -132,5 +133,17 @@ export const getCommentVideo = async (req, res) => {
     });
 
     responseData(res, "Thành công", data, 200);
+  } catch (error) {}
+};
+
+export const commentVideo = async (req, res) => {
+  try {
+    let { token } = req.headers;
+    // giải mã => object giống bên trang jwt.io
+
+    let dToken = decodeToken(token);
+
+    let { user_id } = dToken.data;
+    let { video_id, content } = req.body;
   } catch (error) {}
 };

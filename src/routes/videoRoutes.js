@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  commentVideo,
   createVideo,
   getCommentVideo,
   getVideo,
@@ -29,3 +30,6 @@ videoRoute.get("/get-video-page/:page", getVideoPage);
 
 // API get comment video
 videoRoute.get("/get-comment-video/:videoId", getCommentVideo);
+
+// API comment video
+videoRoute.post("/comment-video", commentVideo)
