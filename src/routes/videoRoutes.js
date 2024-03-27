@@ -9,6 +9,7 @@ import {
   getVideoPage,
   getVideoType,
 } from "../controllers/videoController.js";
+import { checkToken, verifyToken } from "../config/jwt.js";
 
 export const videoRoute = express.Router();
 
@@ -26,10 +27,10 @@ videoRoute.get("/get-video-type", getVideoType);
 videoRoute.get("/get-video-by-type/:typeId", getVideoByType);
 
 // API get video pagination
-videoRoute.get("/get-video-page/:page", getVideoPage);
+videoRoute.get("/get-video-page/:page", verifyToken, getVideoPage);
 
 // API get comment video
 videoRoute.get("/get-comment-video/:videoId", getCommentVideo);
 
 // API comment video
-videoRoute.post("/comment-video", commentVideo)
+videoRoute.post("/comment-video", commentVideo);

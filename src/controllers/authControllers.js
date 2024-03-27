@@ -20,6 +20,11 @@ export const login = async (req, res) => {
     if (checkEmailPass) {
       if (bcrypt.compareSync(pass_word, checkEmailPass.pass_word)) {
         let token = createToken({ user_id: checkEmailPass.user_id });
+        // let token = createToken({
+        //   tenLop: "ngocnhan",
+        //   HetHanString: "22/05/2025",
+        //   HetHanTime: "1716336000000",
+        // });
         console.log(token);
         responseData(res, "Login thành công", token, 200);
       } else {
