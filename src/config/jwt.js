@@ -6,7 +6,7 @@
 import jwt from "jsonwebtoken";
 
 const createToken = (data) => {
-  let token = jwt.sign(data, "BIMAT", { algorithm: "HS256", expiresIn: "50m" });
+  let token = jwt.sign(data, "BIMAT", { algorithm: "HS256", expiresIn: "10m" });
   return token;
 };
 

@@ -36,6 +36,9 @@ export default class users extends Model {
           type: DataTypes.STRING(50),
           allowNull: true,
         },
+        refresh_token: {
+          type: DataTypes.TEXT,
+        },
       },
       {
         sequelize,
