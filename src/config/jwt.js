@@ -13,6 +13,14 @@ const createToken = (data) => {
 const checkToken = (token) =>
   jwt.verify(token, "BIMAT", (error, decoded) => error);
 
+const createRefToken = (data) => {
+  let token = jwt.sign(data, "KO_BIMAT", { algorithm: "HS256", expiresIn: "7d" });
+  return token;
+};
+
+const checkRefToken = (token) =>
+  jwt.verify(token, "KO_BIMAT", (error, decoded) => error);
+
 const decodeToken = (token) => {
   return jwt.decode(token);
 };
@@ -31,7 +39,14 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-export { createToken, checkToken, decodeToken, verifyToken };
+export {
+  createToken,  
+  checkToken,
+  decodeToken,
+  verifyToken,
+  createRefToken,
+  checkRefToken,
+};
 
 // token
 // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJfaWQiOjd9LCJpYXQiOjE3MTEzNTIzNDh9.ttEtzEeWfTD6c1AJuKk85SvPaI8KaXF6t2H3SSJ4Qk0"

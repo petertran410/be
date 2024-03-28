@@ -3,7 +3,7 @@ import { responseData } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
 import bcrypt from "bcrypt";
-import { createToken } from "../config/jwt.js";
+import { createRefToken, createToken } from "../config/jwt.js";
 
 let model = initModels(sequelize);
 let Op = Sequelize.Op;
@@ -20,6 +20,23 @@ export const login = async (req, res) => {
     if (checkEmailPass) {
       if (bcrypt.compareSync(pass_word, checkEmailPass.pass_word)) {
         let token = createToken({ user_id: checkEmailPass.user_id });
+
+        // Khởi tạo refresh_token
+        let refToken = createRefToken({ user_id: checkEmailPass.user_id });
+
+        // Lưu refresh_token vào table users
+        await model.users.update(
+          {
+            ...checkEmailPass.dataValues,
+            refresh_token: refToken,
+          },
+          {
+            where: {
+              user_id: checkUser.user_id,
+            },
+          }
+        );
+
         // let token = createToken({
         //   tenLop: "ngocnhan",
         //   HetHanString: "22/05/2025",
