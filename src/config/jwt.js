@@ -35,7 +35,7 @@ const verifyToken = (req, res, next) => {
     next();
   } else {
     // token không hợp lệ trả về 401 not authorized
-    res.status(401).send(check.message);
+    res.status(401).send(check.name);
   }
 };
 

@@ -1,5 +1,10 @@
 import express from "express";
-import { login, loginFacebook, signUp } from "../controllers/authControllers.js";
+import {
+  login,
+  loginFacebook,
+  tokenRef,
+  signUp,
+} from "../controllers/authControllers.js";
 
 export const authRoute = express.Router();
 
@@ -9,6 +14,8 @@ authRoute.post("/login", login);
 authRoute.post("/signup", signUp);
 // loginFacebook
 authRoute.post("/login-facebook", loginFacebook);
+// refresh Token
+authRoute.post("/token-ref", tokenRef);
 
 // yarn add bcrypt
 // mã hoá pass_word
