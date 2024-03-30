@@ -58,3 +58,60 @@ import { createVideo, getVideo } from "./controllers/videoController.js";
 import { rootRoute } from "./routes/rootRoutes.js";
 // localhost:8080/video/get-video
 app.use(rootRoute);
+
+// yarn add sequelize
+// lưu ý cài thêm thư viện của CSDL đó song song với sequelize
+
+// yarn add swagger-ui-express swagger-jsdoc
+import swaggerUi from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+
+const options = {
+  definition: {
+    info: {
+      title: "api",
+      version: "1.0.0",
+    },
+  },
+  apis: ["src/swagger/index.js"],
+};
+
+const specs = swaggerJsDoc(options);
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(specs));
+
+/**
+ * @swagger
+ * /api/v1/user/getUser
+ * get:
+ *     description: response
+ *     tags: [User]
+ *     responses: 
+ *               200:
+ *                   description: success
+ */
+
+/**
+ * @swagger
+ * /api/v1/user/updateUser/{id}
+ * put:
+ *     description: response
+ *     tags: [User]
+ *     parameters:
+ *     - in: path
+ *       name: id
+ *     - in: body
+ *       name: user
+ *       schema: 
+ *          type: object
+ *          properties:
+ *                userName:
+ *                    type: string
+ *                firstName:
+ *                    type: string
+ *                lastName:
+ *                    type: string
+ *     responses:
+ *        200:
+ *          description: res
+ */

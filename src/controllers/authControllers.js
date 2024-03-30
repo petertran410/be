@@ -190,6 +190,7 @@ export const logout = async (req, res) => {
 
     let accessToken = decodeToken(token);
 
+    // lấy thông tin user trong database
     let getUser = await model.users.findOne({
       where: {
         user_id: accessToken.user_id,
@@ -199,7 +200,7 @@ export const logout = async (req, res) => {
     await model.users.update(
       {
         ...getUser.dataValues,
-        refresh_token: refToken,
+        refresh_token: "",
       },
       {
         where: {
@@ -208,7 +209,7 @@ export const logout = async (req, res) => {
       }
     );
 
-    responseData(res, "Thành công", newToken, 200);
+    responseData(res, "Thành công", "", 200);
   } catch (error) {
     responseData(res, "Lỗi ...", error, 500);
   }
