@@ -26,10 +26,12 @@ export const login = async (req, res) => {
     if (checkUser) {
       if (bcrypt.compareSync(pass_word, checkUser.pass_word)) {
         // token này dùng để ng dùng đăng nhập. Tgian expired là 10m sau đó chuyển hướng qua refresh_token
-        let token = createToken({ user_id: checkUser.user_id });
+        let key = new Date().getTime();
+
+        let token = createToken({ user_id: checkUser.user_id, key });
 
         // Khởi tạo refresh_token =) lưu token vào table để dùng nếu token login bth expired
-        let refToken = createRefToken({ user_id: checkUser.user_id });
+        let refToken = createRefToken({ user_id: checkUser.user_id, key });
 
         // Lưu refresh_token vào table users
         await model.users.update(
@@ -161,8 +163,50 @@ export const tokenRef = async (req, res) => {
       return;
     }
 
+    // check code
+    let refToken = decodeToken(getUser.refresh_token);
+    if (accessToken.data.key != refToken.data.key) {
+      res.status(401).send(check.name);
+      return;
+    }
+
     // token mới này dùng để cho ng dùng thay thế token ở trên
-    let newToken = createToken({ user_id: getUser.user_id });
+    let newToken = createToken({
+      user_id: getUser.user_id,
+      key: refresh_token.key,
+    });
+
+    responseData(res, "Thành công", newToken, 200);
+  } catch (error) {
+    responseData(res, "Lỗi ...", error, 500);
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    // Lấy user_id
+    // structure: {data: {user_id}}
+    let { token } = req.headers;
+
+    let accessToken = decodeToken(token);
+
+    let getUser = await model.users.findOne({
+      where: {
+        user_id: accessToken.user_id,
+      },
+    });
+
+    await model.users.update(
+      {
+        ...getUser.dataValues,
+        refresh_token: refToken,
+      },
+      {
+        where: {
+          user_id: getUser.user_id,
+        },
+      }
+    );
 
     responseData(res, "Thành công", newToken, 200);
   } catch (error) {

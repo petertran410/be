@@ -4,6 +4,7 @@ import {
   loginFacebook,
   tokenRef,
   signUp,
+  logout,
 } from "../controllers/authControllers.js";
 
 export const authRoute = express.Router();
@@ -16,6 +17,8 @@ authRoute.post("/signup", signUp);
 authRoute.post("/login-facebook", loginFacebook);
 // refresh Token
 authRoute.post("/token-ref", tokenRef);
+// API logout
+authRoute.post("/logout", logout);
 
 // yarn add bcrypt
 // mã hoá pass_word
