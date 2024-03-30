@@ -17,50 +17,53 @@ let Op = Sequelize.Op;
 export const login = async (req, res) => {
   try {
     let { email, pass_word } = req.body;
+
+    // check email và pass_word == table user
+    // SELECT * FROM users WHERE email=email AND pass_word= pass_word
+    // if(email==email && pass_word==pass_word)
     let checkUser = await model.users.findOne({
       where: {
-        email,
+        email: email,
       },
     });
 
+    // tồn tại => login thành công
     if (checkUser) {
       if (bcrypt.compareSync(pass_word, checkUser.pass_word)) {
-        // token này dùng để ng dùng đăng nhập. Tgian expired là 10m sau đó chuyển hướng qua refresh_token
+        // miniliseconds
         let key = new Date().getTime();
 
-        let token = createToken({ user_id: checkUser.user_id, key });
+        let token = createToken({
+          user_id: checkUser.user_id,
+          key,
+        });
 
-        // Khởi tạo refresh_token =) lưu token vào table để dùng nếu token login bth expired
-        let refToken = createRefToken({ user_id: checkUser.user_id, key });
+        // khởi tạo refresh token
+        let refToken = createRefToken({
+          user_id: checkUser.user_id,
+          key,
+        });
 
-        // Lưu refresh_token vào table users
+        // lưu refresh token vào table user
+
+        // UPDATE users SET ... WHERE ...
         await model.users.update(
+          { ...checkUser.dataValues, refresh_token: refToken },
           {
-            ...checkUser.dataValues,
-            refresh_token: refToken,
-          },
-          {
-            where: {
-              user_id: checkUser.user_id,
-            },
+            where: { user_id: checkUser.user_id },
           }
         );
 
-        // let token = createToken({
-        //   tenLop: "ngocnhan",
-        //   HetHanString: "22/05/2025",
-        //   HetHanTime: "1716336000000",
-        // });
-        console.log(token);
         responseData(res, "Login thành công", token, 200);
       } else {
-        responseData(res, "Mật khẩu không chính xác", "", 400);
+        responseData(res, "Mật khẩu không đúng", "", 400);
       }
     } else {
-      responseData(res, "Email không chính xác", "", 400);
+      // ko tồn tại => sai email hoặc pass
+      responseData(res, "Email không đúng", "", 400);
     }
-  } catch (error) {
-    responseData(res, "Lỗi ...", error, 500);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
 };
 
@@ -84,7 +87,7 @@ export const signUp = async (req, res) => {
     let newData = {
       full_name,
       email,
-      pass_word: bcrypt.hashSync(pass_word, 10),
+      pass_word: bcrypt.hashSync(pass_word, 10), // còn gặp lại
       avatar: "",
       face_app_id: "",
       role: "user",
@@ -93,72 +96,70 @@ export const signUp = async (req, res) => {
     // Create => thêm mới users
     // INSERT INTO VALUES
     await model.users.create(newData);
-    responseData(res, "Đăng kí thành công", "", 200);
-  } catch (error) {
-    responseData(res, "Lỗi ...", error, 500);
+
+    responseData(res, "Đăng ký thành công", "", 200);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
 };
 
 export const loginFacebook = async (req, res) => {
   try {
-    let { faceAppId, full_name } = req.body;
+    let { full_name, faceAppId } = req.body;
 
-    // Kiểm tra facebook app id
+    // kiểm tra facebook app id
     let checkUser = await model.users.findOne({
       where: {
         face_app_id: faceAppId,
       },
     });
 
-    // Nếu đã tồn tại => login
+    // nếu đã tồn tại => login
     if (!checkUser) {
-      // Nếu chưa tồn tại => signup
+      // nếu chưa tồn tại => thêm user => login
       let newData = {
-        full_name,
+        full_name: full_name,
         email: "",
-        pass_word: "",
+        pass_word: "", // còn gặp lại
         avatar: "",
         face_app_id: faceAppId,
         role: "user",
       };
-      // Create => thêm mới users
-      // INSERT INTO VALUES
       await model.users.create(newData);
     }
-    responseData(res, "Đăng kí thành công", "token", 200);
-  } catch (error) {
-    responseData(res, "Lỗi ...", error, 500);
+
+    responseData(res, "Login thành công", "token", 200);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
 };
 
 export const tokenRef = async (req, res) => {
   try {
-    // Lấy user_id
-    // structure: {data: {user_id}}
     let { token } = req.headers;
 
     // check token
     let check = checkToken(token);
-
-    if (check !== null && check.name !== "TokenExpiredError") {
-      // token không hợp lệ trả về 401 not authorized
+    if (check != null && check.name != "TokenExpiredError") {
+      // token không hợp lệ
       res.status(401).send(check.name);
       return;
     }
 
+    // {data: { user_id: }}
     let accessToken = decodeToken(token);
 
+    // lấy thông tin user trong database
     let getUser = await model.users.findOne({
       where: {
-        user_id: accessToken.user_id,
+        user_id: accessToken.data.user_id,
       },
     });
 
     // check token
     let checkRef = checkRefToken(getUser.refresh_token);
-
-    if (checkRef !== null) {
-      // check refresh_token còn hạn hay không
+    if (checkRef != null) {
+      // check refresh token của mình còn hạn hay không
       res.status(401).send(check.name);
       return;
     }
@@ -170,47 +171,41 @@ export const tokenRef = async (req, res) => {
       return;
     }
 
-    // token mới này dùng để cho ng dùng thay thế token ở trên
+    // tạo mới access token
     let newToken = createToken({
       user_id: getUser.user_id,
-      key: refresh_token.key,
+      key: refToken.data.key,
     });
 
-    responseData(res, "Thành công", newToken, 200);
-  } catch (error) {
-    responseData(res, "Lỗi ...", error, 500);
+    responseData(res, "", newToken, 200);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
 };
 
 export const logout = async (req, res) => {
   try {
-    // Lấy user_id
-    // structure: {data: {user_id}}
     let { token } = req.headers;
 
+    // {data: { user_id: }}
     let accessToken = decodeToken(token);
 
     // lấy thông tin user trong database
     let getUser = await model.users.findOne({
       where: {
-        user_id: accessToken.user_id,
+        user_id: accessToken.data.user_id,
       },
     });
 
     await model.users.update(
+      { ...getUser.dataValues, refresh_token: "" },
       {
-        ...getUser.dataValues,
-        refresh_token: "",
-      },
-      {
-        where: {
-          user_id: getUser.user_id,
-        },
+        where: { user_id: getUser.user_id },
       }
     );
 
-    responseData(res, "Thành công", "", 200);
-  } catch (error) {
-    responseData(res, "Lỗi ...", error, 500);
+    responseData(res, "", newToken, 200);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
 };
