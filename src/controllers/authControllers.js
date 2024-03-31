@@ -152,7 +152,7 @@ export const tokenRef = async (req, res) => {
     // lấy thông tin user trong database
     let getUser = await model.users.findOne({
       where: {
-        user_id: accessToken.data.user_id,
+        user_id: accessToken.user_id,
       },
     });
 
@@ -166,7 +166,7 @@ export const tokenRef = async (req, res) => {
 
     // check code
     let refToken = decodeToken(getUser.refresh_token);
-    if (accessToken.data.key != refToken.data.key) {
+    if (accessToken.key != refToken.key) {
       res.status(401).send(check.name);
       return;
     }
@@ -174,7 +174,7 @@ export const tokenRef = async (req, res) => {
     // tạo mới access token
     let newToken = createToken({
       user_id: getUser.user_id,
-      key: refToken.data.key,
+      key: refToken.key,
     });
 
     responseData(res, "", newToken, 200);

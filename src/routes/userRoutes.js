@@ -13,9 +13,9 @@ export const userRoute = express.Router();
 userRoute.get("/get-user", getUser);
 
 // API get info user
-userRoute.get("/get-info-user/:userId", getInfoUser);
+userRoute.get("/get-info-user", getInfoUser);
 
 // API update info user
-userRoute.put("/update-info/:userId", updateInfo);
+userRoute.put("/update-info", updateInfo);
 
 // localhost:8080/user/get-user
