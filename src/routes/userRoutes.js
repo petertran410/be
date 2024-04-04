@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getInfoUser,
+  getInfo,
   getUser,
   updateInfo,
 } from "../controllers/userController.js";
@@ -13,7 +13,7 @@ export const userRoute = express.Router();
 userRoute.get("/get-user", getUser);
 
 // API get info user
-userRoute.get("/get-info-user", getInfoUser);
+userRoute.get("/get-info", getInfo);
 
 // API update info user
 userRoute.put("/update-info", updateInfo);

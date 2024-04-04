@@ -1,7 +1,7 @@
-import { Sequelize } from "sequelize";
-import { responseData } from "../config/response.js";
-import sequelize from "../models/connect.js";
+import { responseData } from "../config/response.js"
 import initModels from "../models/init-models.js";
+import sequelize from "../models/connect.js";
+
 import bcrypt from "bcrypt";
 import {
   checkRefToken,
@@ -12,59 +12,59 @@ import {
 } from "../config/jwt.js";
 
 let model = initModels(sequelize);
-let Op = Sequelize.Op;
 
 export const login = async (req, res) => {
-  try {
-    let { email, pass_word } = req.body;
+  // try {
+  let { email, pass_word } = req.body;
 
-    // check email và pass_word == table user
-    // SELECT * FROM users WHERE email=email AND pass_word= pass_word
-    // if(email==email && pass_word==pass_word)
-    let checkUser = await model.users.findOne({
-      where: {
-        email: email,
-      },
-    });
+  // check email và pass_word == table user
+  // SELECT * FROM users WHERE email=email AND pass_word= pass_word
+  // if(email==email && pass_word==pass_word)
+  let checkUser = await model.users.findOne({
+    where: {
+      email: email,
+    },
+  });
 
-    // tồn tại => login thành công
-    if (checkUser) {
-      if (bcrypt.compareSync(pass_word, checkUser.pass_word)) {
-        // miniliseconds
-        let key = new Date().getTime();
+  // tồn tại => login thành công
+  if (checkUser) {
+    if (bcrypt.compareSync(pass_word, checkUser.pass_word)) {
+      // miniliseconds
+      let key = new Date().getTime();
 
-        let token = createToken({
-          user_id: checkUser.user_id,
-          key,
-        });
+      let token = createToken({
+        user_id: checkUser.user_id,
+        key,
+      });
 
-        // khởi tạo refresh token
-        let refToken = createRefToken({
-          user_id: checkUser.user_id,
-          key,
-        });
+      // khởi tạo refresh token
+      let refToken = createRefToken({
+        user_id: checkUser.user_id,
+        key,
+      });
 
-        // lưu refresh token vào table user
+      // lưu refresh token vào table user
 
-        // UPDATE users SET ... WHERE ...
-        await model.users.update(
-          { ...checkUser.dataValues, refresh_token: refToken },
-          {
-            where: { user_id: checkUser.user_id },
-          }
-        );
+      // UPDATE users SET ... WHERE ...
+      await model.users.update(
+        { ...checkUser.dataValues, refresh_token: refToken },
+        {
+          where: { user_id: checkUser.user_id },
+        }
+      );
 
-        responseData(res, "Login thành công", token, 200);
-      } else {
-        responseData(res, "Mật khẩu không đúng", "", 400);
-      }
+      responseData(res, "Login thành công", token, 200);
     } else {
-      // ko tồn tại => sai email hoặc pass
-      responseData(res, "Email không đúng", "", 400);
+      responseData(res, "Mật khẩu không đúng", "", 400);
     }
-  } catch {
-    responseData(res, "Lỗi ...", "", 500);
+  } else {
+    // ko tồn tại => sai email hoặc pass
+    responseData(res, "Email không đúng", "", 400);
   }
+
+  // } catch {
+  //     responseData(res, "Lỗi ...", "", 500);
+  // }
 };
 
 export const signUp = async (req, res) => {
@@ -152,7 +152,7 @@ export const tokenRef = async (req, res) => {
     // lấy thông tin user trong database
     let getUser = await model.users.findOne({
       where: {
-        user_id: accessToken.user_id,
+        user_id: accessToken.data.user_id,
       },
     });
 
@@ -166,7 +166,7 @@ export const tokenRef = async (req, res) => {
 
     // check code
     let refToken = decodeToken(getUser.refresh_token);
-    if (accessToken.key != refToken.key) {
+    if (accessToken.data.key != refToken.data.key) {
       res.status(401).send(check.name);
       return;
     }
@@ -174,7 +174,7 @@ export const tokenRef = async (req, res) => {
     // tạo mới access token
     let newToken = createToken({
       user_id: getUser.user_id,
-      key: refToken.key,
+      key: refToken.data.key,
     });
 
     responseData(res, "", newToken, 200);
@@ -184,28 +184,30 @@ export const tokenRef = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  try {
-    let { token } = req.headers;
+  // try {
 
-    // {data: { user_id: }}
-    let accessToken = decodeToken(token);
+  let { token } = req.headers;
 
-    // lấy thông tin user trong database
-    let getUser = await model.users.findOne({
-      where: {
-        user_id: accessToken.data.user_id,
-      },
-    });
+  // {data: { user_id: }}
+  let accessToken = decodeToken(token);
 
-    await model.users.update(
-      { ...getUser.dataValues, refresh_token: "" },
-      {
-        where: { user_id: getUser.user_id },
-      }
-    );
+  // lấy thông tin user trong database
+  let getUser = await model.users.findOne({
+    where: {
+      user_id: accessToken.data.user_id,
+    },
+  });
 
-    responseData(res, "", newToken, 200);
-  } catch {
-    responseData(res, "Lỗi ...", "", 500);
-  }
+  await model.users.update(
+    { ...getUser.dataValues, refresh_token: "" },
+    {
+      where: { user_id: getUser.user_id },
+    }
+  );
+
+  responseData(res, "", newToken, 200);
+
+  // } catch {
+  //     responseData(res, "Lỗi ...", "", 500);
+  // }
 };
