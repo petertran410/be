@@ -12,6 +12,9 @@ app.listen(8080);
 import cors from "cors";
 app.use(cors());
 
+// middle ware định vị thư mục load tài nguyên
+app.use(express.static("."))
+
 // Khởi động server BE bằng lệnh node server.js
 
 // GET url: localhost:8080/demo
