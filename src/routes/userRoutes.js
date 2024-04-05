@@ -24,12 +24,19 @@ import multer from "multer";
 
 let storage = multer.diskStorage({
   destination: process.cwd() + "/public/img", // nơi định nghĩa đường dẫn lưu hình
-  filename: "", // nơi đổi tên hình
+  filename: (req, file, callback) => {
+    let newName = new Date().getTime() + "_" + file.originalname;
+
+    callback(null, newName);
+  }, // nơi đổi tên hình
 });
 
 let upload = multer({ storage });
 
 // truyền vô key trong upload.single. Key này front end phải tuân theo
-userRoute.post("/upload-avatar", upload.single("avatar"),(req, res) => {});
+userRoute.post("/upload-avatar", upload.single("avatar"), (req, res) => {
+  let { file } = req;
+  res.send(file);
+});
 
 // localhost:8080/user/get-user
