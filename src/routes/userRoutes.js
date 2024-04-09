@@ -34,9 +34,12 @@ let storage = multer.diskStorage({
 let upload = multer({ storage });
 
 // truyền vô key trong upload.single. Key này front end phải tuân theo
-userRoute.post("/upload-avatar", upload.single("avatar"), (req, res) => {
-  let { file } = req;
-  res.send(file);
+userRoute.post("/upload-avatar", upload.array("avatar"), (req, res) => {
+  let { files } = req;
+  
+  let { hoTen, email } = req.body;
+
+  res.send(files);
 });
 
 // localhost:8080/user/get-user
