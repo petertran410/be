@@ -1,5 +1,5 @@
 import express from "express";
-import { getInfo, getUser, updateInfo } from "../controllers/userController.js";
+import { getInfo, getUser, updateInfo, uploadAvatar } from "../controllers/userController.js";
 
 export const userRoute = express.Router();
 
@@ -20,26 +20,9 @@ userRoute.put("/update-info", updateInfo);
 // trả về đường dẫn gốc của source
 // process.cwd() => nhảy ra đường dẫn ngoài cùng
 
-import multer from "multer";
-
-let storage = multer.diskStorage({
-  destination: process.cwd() + "/public/img", // nơi định nghĩa đường dẫn lưu hình
-  filename: (req, file, callback) => {
-    let newName = new Date().getTime() + "_" + file.originalname;
-
-    callback(null, newName);
-  }, // nơi đổi tên hình
-});
-
-let upload = multer({ storage });
+import upload from "../config/upload.js";
 
 // truyền vô key trong upload.single. Key này front end phải tuân theo
-userRoute.post("/upload-avatar", upload.array("avatar"), (req, res) => {
-  let { files } = req;
-  
-  let { hoTen, email } = req.body;
-
-  res.send(files);
-});
+userRoute.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
 
 // localhost:8080/user/get-user

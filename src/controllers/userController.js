@@ -68,3 +68,56 @@ export const updateInfo = async (req, res) => {
     responseData(res, "Lỗi ...", "", 500);
   }
 };
+
+// FS => File system
+import fs from "fs";
+
+export const uploadAvatar = async (req, res) => {
+  let { file } = req;
+
+  let { token } = req.headers;
+  let accessToken = decodeToken(token);
+  let { user_id } = accessToken.data;
+
+  let getUser = await model.users.findOne({
+    where: {
+      user_id,
+    },
+  });
+
+  getUser.avatar = file.filename;
+  await model.users.update(getUser.dataValues, {
+    where: {
+      user_id,
+    },
+  });
+
+  res.send(file.filename);
+
+  // Tạo file => data.txt: tranngocnhan
+  // fs.readFile(
+  //   process.cwd() + "/public/imgs/" + file.filename,
+  //   (error, data) => {
+  //     // let newData = Buffer.from(data).toString("base64");
+
+  //     let newData = `data:${file.mimetype};base64, ${Buffer.from(data).toString(
+  //       "base64"
+  //     )}`;
+
+  //     res.send(newData);
+  //     return;
+  //   }
+  // );
+
+  // fs.writeFile(
+  //   process.cwd() + "/public/file/data.txt",
+  //   "tranngocnhan",
+  //   () => {}
+  // );
+  // fs.rename();
+  // fs.copyFile();
+  // fs.readFile(); // Đọc file và lấy dữ liệu xuất ra ngoài
+  // fs.unlink(); // xoá file
+
+  // res.send(file);
+};
