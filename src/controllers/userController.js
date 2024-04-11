@@ -17,27 +17,28 @@ export const getUser = async (req, res) => {
 };
 
 export const getInfo = async (req, res) => {
-  // try {
+  try {
+    let { token } = req.headers;
+    let { pass_word } = req.body;
+    let accessToken = decodeToken(token);
 
-  let { token } = req.headers;
-  let accessToken = decodeToken(token);
+    let getUser = await model.users.findOne({
+      where: {
+        user_id: accessToken.data.user_id,
+      },
+    });
 
-  let getUser = await model.users.findOne({
-    where: {
-      user_id: accessToken.data.user_id,
-    },
-  });
+    // getUser.pass_word = ;
 
-  if (!getUser) {
-    responseData(res, "User không tồn tại", "", 404);
-    return;
+    if (!getUser) {
+      responseData(res, "User không tồn tại", "", 404);
+      return;
+    }
+
+    responseData(res, "Success", getUser, 200);
+  } catch {
+    responseData(res, "Lỗi ...", "", 500);
   }
-
-  responseData(res, "Success", getUser, 200);
-
-  // } catch {
-  //     responseData(res, "Lỗi ...", "", 500);
-  // }
 };
 
 export const updateInfo = async (req, res) => {
@@ -55,6 +56,7 @@ export const updateInfo = async (req, res) => {
     });
 
     getUser.pass_word = bcrypt.hashSync(pass_word, 10);
+    // getUser.pass_word = pass_word;
     getUser.full_name = full_name;
 
     await model.users.update(getUser.dataValues, {

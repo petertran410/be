@@ -1,5 +1,10 @@
 import express from "express";
-import { getInfo, getUser, updateInfo, uploadAvatar } from "../controllers/userController.js";
+import {
+  getInfo,
+  getUser,
+  updateInfo,
+  uploadAvatar,
+} from "../controllers/userController.js";
 
 export const userRoute = express.Router();
 
