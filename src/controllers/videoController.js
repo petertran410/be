@@ -23,6 +23,9 @@ export const searchVideo = async (req, res) => {
       },
     },
   });
+
+  // prima.video.create({ data: {video_id, video_name, ...}  <=> model.video.create( {video_id, video_name} )})
+
   responseData(res, "Thành công", data, 200);
 };
 
