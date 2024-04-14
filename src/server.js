@@ -13,7 +13,7 @@ import cors from "cors";
 app.use(cors());
 
 // middle ware định vị thư mục load tài nguyên
-app.use(express.static("."))
+app.use(express.static("."));
 
 // Khởi động server BE bằng lệnh node server.js
 
@@ -82,3 +82,15 @@ const options = {
 const specs = swaggerJsDoc(options);
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(specs));
+
+// setup prisma
+// 1. yarn add prisma @prisma/client
+// 2. yarn prisma init
+
+// Next steps:
+
+// 3. Cập nhật lại chuỗi kết nối database trong .env và tên hệ hệ CSDL đang sử dụng trong schema.prisma
+
+// 4. Run yarn prisma db pull
+
+// 5. Run yarn prisma generate để cập nhật model trong @prisma@client

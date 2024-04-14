@@ -8,10 +8,14 @@ import {
   getVideoId,
   getVideoPage,
   getVideoType,
+  searchVideo,
 } from "../controllers/videoController.js";
 import { checkToken, verifyToken } from "../config/jwt.js";
 
 export const videoRoute = express.Router();
+
+// API get video prisma
+videoRoute.get("/search-video/:videoName", searchVideo);
 
 // Nơi quản lý API của đối tượng
 videoRoute.get("/get-video", getVideo);

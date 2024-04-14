@@ -8,6 +8,24 @@ import { Sequelize } from "sequelize";
 let model = initModels(sequelize);
 let Op = Sequelize.Op;
 
+// prisma
+import { PrismaClient } from "@prisma/client";
+let prisma = new PrismaClient();
+
+export const searchVideo = async (req, res) => {
+  let { videoName } = req.params;
+  // SELECT * FROM video
+  // let data = await model.users.findAll();
+  let data = await prisma.video.findMany({
+    where: {
+      video_name: {
+        contains: videoName,
+      },
+    },
+  });
+  responseData(res, "Thành công", data, 200);
+};
+
 // Quản lí, thực hiện chức năng
 export const getVideo = async (req, res) => {
   try {
