@@ -13,18 +13,31 @@ import { PrismaClient } from "@prisma/client";
 let prisma = new PrismaClient();
 
 export const searchVideo = async (req, res) => {
-  let { videoName } = req.params;
-  // SELECT * FROM video
-  // let data = await model.users.findAll();
+  // let { videoName } = req.params;
+  // // SELECT * FROM video
+  // // let data = await model.users.findAll();
+  // let data = await prisma.video.findMany({
+  //   where: {
+  //     video_name: {
+  //       contains: videoName,
+  //     },
+  //   },
+  // });
+
+  // Lưu ý
+  // prima.video.create({ data: { video_id, video_name, ...} }) <=> model.video.create( {video_id, video_name} )
+  // prisma.video.update({ data: { video_id, video_name }, where: {} })
+  // prisma.video.destroy( {where} ) <=> model.video.destroy()
+
   let data = await prisma.video.findMany({
-    where: {
-      video_name: {
-        contains: videoName,
+    include: {
+      video_comment: {
+        include: {
+          users: true,
+        },
       },
     },
   });
-
-  // prima.video.create({ data: {video_id, video_name, ...}  <=> model.video.create( {video_id, video_name} )})
 
   responseData(res, "Thành công", data, 200);
 };
