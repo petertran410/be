@@ -15,6 +15,89 @@ app.use(cors());
 // middle ware định vị thư mục load tài nguyên
 app.use(express.static("."));
 
+// yarn add graphql express-graphql
+// graphql
+import { graphqlHTTP } from "express-graphql";
+import { buildSchema } from "graphql";
+
+// {productId, productName}
+let schemaGraphpl = buildSchema(`
+  type User {
+    id: ID
+    userName: String
+    age: Int
+    email: String
+    product: [Product]
+  }
+
+  type Product {
+    productId: ID
+    productName: String
+  }
+
+  type RootQuery {
+    getUser: User
+    getUserId(userId: Int): User
+  }
+
+  type RootMutation {
+    createUser: String
+  }
+
+  schema {
+    query: RootQuery
+    mutation: RootMutation
+  }
+`);
+
+let resolver = {
+  getUser: () => {
+    let data = {
+      id: 1,
+      userName: "abc",
+      age: 2,
+      email: "abc@gmail.com",
+      product: [
+        {
+          productId: 1,
+          productName: "sp1",
+        },
+      ],
+    };
+    return data;
+  },
+
+  getUserId: ({ userId }) => {
+    let data = {
+      id: userId,
+      userName: "abc",
+      age: 2,
+      email: "abc@gmail.com",
+      product: [
+        {
+          productId: 1,
+          productName: "abc",
+        },
+      ],
+    };
+    return data;
+  },
+
+  createUser: () => {},
+};
+
+// localhost:8080/api
+app.use(
+  "/api",
+  graphqlHTTP({
+    schema: schemaGraphpl, // nơi khai báo đối tượng (tên model, tên hàm)
+    rootValue: resolver, // gán dữ liệu vào các hàm được khai báo ở schema
+    graphiql: true,
+  })
+);
+
+// end graphql
+
 // Khởi động server BE bằng lệnh node server.js
 
 // GET url: localhost:8080/demo
