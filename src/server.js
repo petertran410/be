@@ -23,11 +23,33 @@ import { buildSchema } from "graphql";
 // {productId, productName}
 let schemaGraphpl = buildSchema(`
   type User {
-    id: ID
-    userName: String
-    age: Int
+    user_id: ID
+    full_name: String
     email: String
-    product: [Product]
+    avatar: String,
+    pass_word: String,
+    face_app_id: String,
+    role: String,
+    refresh_token: String
+  }
+
+  type Video {
+    video_id: ID,
+    video_name: String,
+    thumbnail: String,
+    description: String,
+    views: Int,
+    source: String,
+    user_id: Int,
+    type_id: Int,
+    users: User,
+    video_type: videoType
+  }
+
+  type videoType {
+    type_id: ID,
+    type_name: String,
+    icon: String
   }
 
   type Product {
@@ -38,6 +60,7 @@ let schemaGraphpl = buildSchema(`
   type RootQuery {
     getUser: User
     getUserId(userId: Int): User
+    getVideo: [Video]
   }
 
   type RootMutation {
@@ -50,7 +73,21 @@ let schemaGraphpl = buildSchema(`
   }
 `);
 
+import { PrismaClient } from "@prisma/client";
+let prisma = new PrismaClient();
+
 let resolver = {
+  getVideo: async () => {
+    let data = await prisma.video.findMany({
+      include: {
+        users: true,
+        video_type: true,
+      },
+    });
+    console.log(data);
+    return data;
+  },
+
   getUser: () => {
     let data = {
       id: 1,
