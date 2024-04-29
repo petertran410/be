@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // Khởi tạo server BE chạy port 8080
-app.listen(8080);
+// app.listen(8080);
 
 // yarn add cors
 import cors from "cors";
@@ -15,113 +15,33 @@ app.use(cors());
 // middle ware định vị thư mục load tài nguyên
 app.use(express.static("."));
 
+// socket
+import { createServer } from "http";
+import { Server } from "socket.io";
+
+const httpServer = createServer(app);
+
+// Đối tượng socket server
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // mở chặn browser nhưng cho tính năng real time
+  },
+});
+
+// connection là chữ quy định của socket
+io.on("connection", (socket) => {
+  // Đối tượng socket client
+  console.log(socket.id);
+});
+
+httpServer.listen(8080);
+// end socket
+
 // yarn add graphql express-graphql
 // graphql
 import { graphqlHTTP } from "express-graphql";
-import { buildSchema } from "graphql";
-
-// {productId, productName}
-let schemaGraphpl = buildSchema(`
-  type User {
-    user_id: ID
-    full_name: String
-    email: String
-    avatar: String,
-    pass_word: String,
-    face_app_id: String,
-    role: String,
-    refresh_token: String
-  }
-
-  type Video {
-    video_id: ID,
-    video_name: String,
-    thumbnail: String,
-    description: String,
-    views: Int,
-    source: String,
-    user_id: Int,
-    type_id: Int,
-    users: User,
-    video_type: videoType
-  }
-
-  type videoType {
-    type_id: ID,
-    type_name: String,
-    icon: String
-  }
-
-  type Product {
-    productId: ID
-    productName: String
-  }
-
-  type RootQuery {
-    getUser: User
-    getUserId(userId: Int): User
-    getVideo: [Video]
-  }
-
-  type RootMutation {
-    createUser: String
-  }
-
-  schema {
-    query: RootQuery
-    mutation: RootMutation
-  }
-`);
-
-import { PrismaClient } from "@prisma/client";
-let prisma = new PrismaClient();
-
-let resolver = {
-  getVideo: async () => {
-    let data = await prisma.video.findMany({
-      include: {
-        users: true,
-        video_type: true,
-      },
-    });
-    console.log(data);
-    return data;
-  },
-
-  getUser: () => {
-    let data = {
-      id: 1,
-      userName: "abc",
-      age: 2,
-      email: "abc@gmail.com",
-      product: [
-        {
-          productId: 1,
-          productName: "sp1",
-        },
-      ],
-    };
-    return data;
-  },
-
-  getUserId: ({ userId }) => {
-    let data = {
-      id: userId,
-      userName: "abc",
-      age: 2,
-      email: "abc@gmail.com",
-      product: [
-        {
-          productId: 1,
-          productName: "abc",
-        },
-      ],
-    };
-    return data;
-  },
-
-  createUser: () => {},
-};
+import { schemaGraphpl } from "./graphql/schema.js";
+import { resolver } from "./graphql/resolver.js";
 
 // localhost:8080/api
 app.use(
@@ -132,7 +52,6 @@ app.use(
     graphiql: true,
   })
 );
-
 // end graphql
 
 // Khởi động server BE bằng lệnh node server.js
