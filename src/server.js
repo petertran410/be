@@ -22,16 +22,27 @@ import { Server } from "socket.io";
 const httpServer = createServer(app);
 
 // Đối tượng socket server
-const io = new Server(httpServer, {
+export const io = new Server(httpServer, {
   cors: {
     origin: "*", // mở chặn browser nhưng cho tính năng real time
   },
 });
 
+let number = 0;
+
 // connection là chữ quy định của socket
 io.on("connection", (socket) => {
   // Đối tượng socket client
-  console.log(socket.id);
+  // console.log(socket.id);
+
+  // emit: gửi đi
+  // nhận vô 2 giá trị: key được quy định dưới BE, và giá trị gửi đi
+  // server gửi đi tất cả client
+  io.emit("fe-connect", socket.id);
+
+  socket.on("number-be", () => {
+    io.emit("fe-number", number++);
+  });
 });
 
 httpServer.listen(8080);
