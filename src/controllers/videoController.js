@@ -10,6 +10,7 @@ let Op = Sequelize.Op;
 
 // prisma
 import { PrismaClient } from "@prisma/client";
+import { io } from "../server.js";
 let prisma = new PrismaClient();
 
 export const searchVideo = async (req, res) => {
@@ -190,6 +191,15 @@ export const commentVideo = async (req, res) => {
     };
 
     await model.video_comment.create(newData);
+
+    let data = await model.video_comment.findAll({
+      where: {
+        video_id,
+      },
+      include: ["user"],
+    });
+
+    io.emit("new-comment-video", data);
 
     responseData(res, "Thành công", "", 200);
   } catch (error) {

@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // Khởi tạo server BE chạy port 8080
-app.listen(8080);
+// app.listen(8080);
 
 // yarn add cors
 import cors from "cors";
@@ -14,6 +14,56 @@ app.use(cors());
 
 // middle ware định vị thư mục load tài nguyên
 app.use(express.static("."));
+
+// socket
+import { createServer } from "http";
+import { Server } from "socket.io";
+
+const httpServer = createServer(app);
+
+// Đối tượng socket server
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // mở chặn browser nhưng cho tính năng real time
+  },
+});
+
+let number = 0;
+
+// connection là chữ quy định của socket
+io.on("connection", (socket) => {
+  // Đối tượng socket client
+  // console.log(socket.id);
+
+  // emit: gửi đi
+  // nhận vô 2 giá trị: key được quy định dưới BE, và giá trị gửi đi
+  // server gửi đi tất cả client
+  io.emit("fe-connect", socket.id);
+
+  socket.on("number-be", () => {
+    io.emit("fe-number", number++);
+  });
+});
+
+httpServer.listen(8080);
+// end socket
+
+// yarn add graphql express-graphql
+// graphql
+import { graphqlHTTP } from "express-graphql";
+import { schemaGraphpl } from "./graphql/schema.js";
+import { resolver } from "./graphql/resolver.js";
+
+// localhost:8080/api
+app.use(
+  "/api",
+  graphqlHTTP({
+    schema: schemaGraphpl, // nơi khai báo đối tượng (tên model, tên hàm)
+    rootValue: resolver, // gán dữ liệu vào các hàm được khai báo ở schema
+    graphiql: true,
+  })
+);
+// end graphql
 
 // Khởi động server BE bằng lệnh node server.js
 
