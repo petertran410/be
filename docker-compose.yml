@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mysql_db:
+    image: mysql # docker pull mysql
+    container_name: mysql_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_db:/var/lib/mysql
+    networks:
+      - node-work
+
+  app:
+    depends_on:
+      - mysql_db
+    build: . # docker build .
+    container_name: cons_node
+    environment:
+      - DB_DATABASE=tranngocnhan
+      - DB_USER=root
+      - DB_PASS=1234
+      - DB_HOST=mysql_db
+      - DB_PORT=3306
+      - DB_DIALECT=mysql
+      - DATABASE_URL="mysql://root:1234@mysql_db:3307/tranngocnhan?schema=public"
+    ports:
+      - 8080:8080
+    networks:
+      - node-work
+
+volumes:
+  mysql_db:
+    driver: local
+
+networks:
+  node-work:
